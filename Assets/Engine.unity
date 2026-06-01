@@ -399,11 +399,23 @@ PrefabInstance:
       propertyPath: m_Name
       value: Splash
       objectReference: {fileID: 0}
+    - target: {fileID: 4821248071839386858, guid: 14cd4328b6ce06c47b9cc9d4d76e78ee,
+        type: 3}
+      propertyPath: m_VideoClip
+      value: 
+      objectReference: {fileID: 32900000, guid: 7ee9505ef8bcaca49adaddd2bbbd758a,
+        type: 3}
     - target: {fileID: 4821248072431193492, guid: 14cd4328b6ce06c47b9cc9d4d76e78ee,
         type: 3}
       propertyPath: SplashRoot
       value: 
       objectReference: {fileID: 1657455073}
+    - target: {fileID: 4821248072431193492, guid: 14cd4328b6ce06c47b9cc9d4d76e78ee,
+        type: 3}
+      propertyPath: FadeOutVideo
+      value: 
+      objectReference: {fileID: 32900000, guid: e357041f33146544ab0ab02599f69bd1,
+        type: 3}
     - target: {fileID: 4821248072431193492, guid: 14cd4328b6ce06c47b9cc9d4d76e78ee,
         type: 3}
       propertyPath: SplashMaterial
