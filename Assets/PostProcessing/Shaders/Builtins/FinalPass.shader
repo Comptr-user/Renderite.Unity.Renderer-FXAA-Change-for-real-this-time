@@ -22,19 +22,22 @@ Shader "Hidden/PostProcessing/FinalPass"
             // Luma is encoded in alpha after the first Uber pass
             #define FXAA_GREEN_AS_LUMA 0
         #endif
-
-        #if FXAA_LOW
-            #define FXAA_QUALITY__PRESET 12
-            #define FXAA_QUALITY_SUBPIX 1.0
-            #define FXAA_QUALITY_EDGE_THRESHOLD 0.166
-            #define FXAA_QUALITY_EDGE_THRESHOLD_MIN 0.0625
-        #else
-            #define FXAA_QUALITY__PRESET 28
-            #define FXAA_QUALITY_SUBPIX 1.0
-            #define FXAA_QUALITY_EDGE_THRESHOLD 0.063
-            #define FXAA_QUALITY_EDGE_THRESHOLD_MIN 0.0312
-        #endif
-
+        //I don't know if Resonite uses the FXAA_LOW variable, but considering how there isn't a way for the user to
+        //select low quality FXAA over high quality, I think it should be safe to just remove it.
+        //Commenting out instead of deleting just in case it is needed.
+        //#if FXAA_LOW
+        //    #define FXAA_QUALITY__PRESET 12
+        //    #define FXAA_QUALITY_SUBPIX 1.0
+        //    #define FXAA_QUALITY_EDGE_THRESHOLD 0.166
+        //    #define FXAA_QUALITY_EDGE_THRESHOLD_MIN 0.0625
+        //#else
+        
+        #define FXAA_QUALITY__PRESET 39 //used to be 28
+        #define FXAA_QUALITY_SUBPIX 0   //used to be 1.0, which is the max value. Could be a little higher than 0 if the increase in aliasing is too much, though increasing the value directly results in less clarity.
+        #define FXAA_QUALITY_EDGE_THRESHOLD 0.063//------|
+        #define FXAA_QUALITY_EDGE_THRESHOLD_MIN 0.0312//-|these two are basically how strong the FXAA edge detection is. Lower values = stronger edge detection.
+        //-----------------------------------------------|Not changing these for now, just to avoid changing too many values at once.
+        //#endif
         #include "FastApproximateAntialiasing.hlsl"
 
         TEXTURE2D_SAMPLER2D(_MainTex, sampler_MainTex);
