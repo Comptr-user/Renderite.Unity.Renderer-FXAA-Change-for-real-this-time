@@ -38,7 +38,7 @@ namespace UnityEngine.Rendering.PostProcessing
             #endif
                 && SystemInfo.supportsMotionVectors
                 && RenderTextureFormat.RGHalf.IsSupported()
-                && !context.stereoActive;
+                /*&& !context.stereoActive*/;
         }
     }
 
