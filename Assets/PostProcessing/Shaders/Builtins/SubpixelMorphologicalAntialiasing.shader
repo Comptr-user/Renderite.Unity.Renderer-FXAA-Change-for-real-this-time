@@ -43,7 +43,7 @@ Shader "Hidden/PostProcessing/SubpixelMorphologicalAntialiasing"
 
                 #pragma vertex VertEdge
                 #pragma fragment FragEdge
-                #define SMAA_PRESET_HIGH
+                #define SMAA_PRESET_ULTRA //Since Resonite always uses the "high" unity setting, we only have to replace the "SMAA_PRESET_HIGH" instances with "SMAA_PRESET_ULTRA" to use the Ultra preset.
                 #include "SubpixelMorphologicalAntialiasingBridge.hlsl"
 
             ENDHLSL
@@ -82,7 +82,7 @@ Shader "Hidden/PostProcessing/SubpixelMorphologicalAntialiasing"
 
                 #pragma vertex VertBlend
                 #pragma fragment FragBlend
-                #define SMAA_PRESET_HIGH
+                #define SMAA_PRESET_ULTRA
                 #include "SubpixelMorphologicalAntialiasingBridge.hlsl"
 
             ENDHLSL
