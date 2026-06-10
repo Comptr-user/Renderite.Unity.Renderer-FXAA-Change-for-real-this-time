@@ -3,7 +3,7 @@ Shader "Hidden/PostProcessing/FinalPass"
     HLSLINCLUDE
 
         #pragma multi_compile __ FXAA FXAA_LOW
-        #pragma multi_compile __ FXAA_KEEP_ALPHA
+        #pragma multi_compile __ FXAA_KEEP_ALPHA FXAA_NO_ALPHA
 
         #pragma vertex VertUVTransform
         #pragma fragment Frag
@@ -15,7 +15,7 @@ Shader "Hidden/PostProcessing/FinalPass"
         // PS3 and XBOX360 aren't supported in Unity anymore, only use the PC variant
         #define FXAA_PC 1
 
-        #if FXAA_KEEP_ALPHA
+        #if FXAA_KEEP_ALPHA || FXAA_NO_ALPHA
             // Luma hasn't been encoded in alpha
             #define FXAA_GREEN_AS_LUMA 1
         #else
@@ -31,13 +31,14 @@ Shader "Hidden/PostProcessing/FinalPass"
         //    #define FXAA_QUALITY_EDGE_THRESHOLD 0.166
         //    #define FXAA_QUALITY_EDGE_THRESHOLD_MIN 0.0625
         //#else
-        
+
         #define FXAA_QUALITY__PRESET 39 //used to be 28
         #define FXAA_QUALITY_SUBPIX 0   //used to be 1.0, which is the max value. Could be a little higher than 0 if the increase in aliasing is too much, though increasing the value directly results in less clarity.
         #define FXAA_QUALITY_EDGE_THRESHOLD 0.063//------|
         #define FXAA_QUALITY_EDGE_THRESHOLD_MIN 0.0312//-|these two are basically how strong the FXAA edge detection is. Lower values = stronger edge detection.
         //-----------------------------------------------|Not changing these for now, just to avoid changing too many values at once.
         //#endif
+
         #include "FastApproximateAntialiasing.hlsl"
 
         TEXTURE2D_SAMPLER2D(_MainTex, sampler_MainTex);

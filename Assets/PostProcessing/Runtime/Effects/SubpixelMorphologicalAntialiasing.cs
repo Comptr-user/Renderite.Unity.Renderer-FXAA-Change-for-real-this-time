@@ -5,9 +5,7 @@ namespace UnityEngine.Rendering.PostProcessing
     /// <summary>
     /// This class holds settings for the Subpixel Morphological Anti-aliasing (SMAA) effect.
     /// </summary>
-#if UNITY_2017_1_OR_NEWER
     [UnityEngine.Scripting.Preserve]
-#endif
     [Serializable]
     public sealed class SubpixelMorphologicalAntialiasing
     {
@@ -43,15 +41,17 @@ namespace UnityEngine.Rendering.PostProcessing
         /// The quality preset to use for the anti-aliasing filter.
         /// </summary>
         [Tooltip("Lower quality is faster at the expense of visual quality (Low = ~60%, Medium = ~80%).")]
-        public Quality quality = Quality.High;
-
+        public Quality quality = Quality.High; //pretty sure this means we're using the "High" SMAA preset, so in other files like the SMAA.shader file, I replaced the instances of SMAA_QUALITY_HIGH with SMAA_PRESET_ULTRA so that we use the ultra preset instead.
+                                               // There's probably a better way to do this, I'm just sure that this method at least works without causing weird breakage.
         /// <summary>
         /// Checks if the effect is supported on the target platform.
         /// </summary>
         /// <returns><c>true</c> if the anti-aliasing filter is supported, <c>false</c> otherwise</returns>
-        public bool IsSupported(Camera camera)
+        public bool IsSupported()
         {
-            return !RuntimeUtilities.isSinglePassStereoEnabled || camera.stereoTargetEye == StereoTargetEyeMask.None;
+            //Just commenting out the old check, and making this always return true. Not removing the check out of paranoia that something might break if I do.
+            //return !RuntimeUtilities.isSinglePassStereoEnabled;
+            return true;
         }
 
         internal void Render(PostProcessRenderContext context)
@@ -63,8 +63,13 @@ namespace UnityEngine.Rendering.PostProcessing
             var cmd = context.command;
             cmd.BeginSample("SubpixelMorphologicalAntialiasing");
 
-            cmd.GetTemporaryRT(ShaderIDs.SMAA_Flip, context.width, context.height, 0, FilterMode.Bilinear, context.sourceFormat, RenderTextureReadWrite.Linear);
-            cmd.GetTemporaryRT(ShaderIDs.SMAA_Flop, context.width, context.height, 0, FilterMode.Bilinear, context.sourceFormat, RenderTextureReadWrite.Linear);
+#if UNITY_2017_3_OR_NEWER
+            cmd.GetTemporaryRT(ShaderIDs.SMAA_Flip, context.width, context.height, 0, FilterMode.Bilinear, context.sourceFormat, RenderTextureReadWrite.Linear, 1, false, RenderTextureMemoryless.None, context.camera.allowDynamicResolution);
+            cmd.GetTemporaryRT(ShaderIDs.SMAA_Flop, context.width, context.height, 0, FilterMode.Bilinear, context.sourceFormat, RenderTextureReadWrite.Linear, 1, false, RenderTextureMemoryless.None, context.camera.allowDynamicResolution);
+#else
+            cmd.GetTemporaryRT(ShaderIDs.SMAA_Flip, context.width, context.height, 0, FilterMode.Bilinear, context.sourceFormat, RenderTextureReadWrite.Linear, 1, false);
+            cmd.GetTemporaryRT(ShaderIDs.SMAA_Flop, context.width, context.height, 0, FilterMode.Bilinear, context.sourceFormat, RenderTextureReadWrite.Linear, 1, false);
+#endif
 
             cmd.BlitFullscreenTriangle(context.source, ShaderIDs.SMAA_Flip, sheet, (int)Pass.EdgeDetection + (int)quality, true);
             cmd.BlitFullscreenTriangle(ShaderIDs.SMAA_Flip, ShaderIDs.SMAA_Flop, sheet, (int)Pass.BlendWeights + (int)quality);
@@ -73,7 +78,7 @@ namespace UnityEngine.Rendering.PostProcessing
 
             cmd.ReleaseTemporaryRT(ShaderIDs.SMAA_Flip);
             cmd.ReleaseTemporaryRT(ShaderIDs.SMAA_Flop);
-            
+
             cmd.EndSample("SubpixelMorphologicalAntialiasing");
         }
     }
