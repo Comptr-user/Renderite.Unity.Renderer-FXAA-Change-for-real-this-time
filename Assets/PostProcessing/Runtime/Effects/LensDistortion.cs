@@ -47,25 +47,27 @@ namespace UnityEngine.Rendering.PostProcessing
         [Range(0.01f, 5f), Tooltip("Global screen scaling.")]
         public FloatParameter scale = new FloatParameter { value = 1f };
 
-        /// <inheritdoc />
+        /// <summary>
+        /// Returns <c>true</c> if the effect is currently enabled and supported.
+        /// </summary>
+        /// <param name="context">The current post-processing render context</param>
+        /// <returns><c>true</c> if the effect is currently enabled and supported</returns>
         public override bool IsEnabledAndSupported(PostProcessRenderContext context)
         {
             return enabled.value
                 && !Mathf.Approximately(intensity, 0f)
                 && (intensityX > 0f || intensityY > 0f)
-                && !RuntimeUtilities.isVREnabled;
+                && !context.stereoActive;
         }
     }
 
-#if UNITY_2017_1_OR_NEWER
     [UnityEngine.Scripting.Preserve]
-#endif
     internal sealed class LensDistortionRenderer : PostProcessEffectRenderer<LensDistortion>
     {
         public override void Render(PostProcessRenderContext context)
         {
             var sheet = context.uberSheet;
-            
+
             float amount = 1.6f * Math.Max(Mathf.Abs(settings.intensity.value), 1f);
             float theta = Mathf.Deg2Rad * Math.Min(160f, amount);
             float sigma = 2f * Mathf.Tan(theta * 0.5f);

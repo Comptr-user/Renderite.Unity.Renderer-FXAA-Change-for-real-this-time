@@ -56,13 +56,13 @@ namespace UnityEngine.Rendering.PostProcessing
     /// A volume parameter holding a <see cref="AmbientOcclusionMode"/> value.
     /// </summary>
     [Serializable]
-    public sealed class AmbientOcclusionModeParameter : ParameterOverride<AmbientOcclusionMode> {}
+    public sealed class AmbientOcclusionModeParameter : ParameterOverride<AmbientOcclusionMode> { }
 
     /// <summary>
     /// A volume parameter holding a <see cref="AmbientOcclusionQuality"/> value.
     /// </summary>
     [Serializable]
-    public sealed class AmbientOcclusionQualityParameter : ParameterOverride<AmbientOcclusionQuality> {}
+    public sealed class AmbientOcclusionQualityParameter : ParameterOverride<AmbientOcclusionQuality> { }
 
     /// <summary>
     /// This class holds settings for the Ambient Occlusion effect.
@@ -77,7 +77,6 @@ namespace UnityEngine.Rendering.PostProcessing
         /// The ambient occlusion method to use.
         /// </summary>
         [Tooltip("The ambient occlusion method to use. \"Multi Scale Volumetric Obscurance\" is higher quality and faster on desktop & console platforms but requires compute shader support.")]
-        
         public AmbientOcclusionModeParameter mode = new AmbientOcclusionModeParameter { value = AmbientOcclusionMode.MultiScaleVolumetricObscurance };
 
         /// <summary>
@@ -90,7 +89,6 @@ namespace UnityEngine.Rendering.PostProcessing
         /// A custom color to use for the ambient occlusion.
         /// </summary>
         [ColorUsage(false), Tooltip("The custom color to use for the ambient occlusion. The default is black.")]
-        
         public ColorParameter color = new ColorParameter { value = Color.black };
 
         /// <summary>
@@ -138,6 +136,7 @@ namespace UnityEngine.Rendering.PostProcessing
         public FloatParameter directLightingStrength = new FloatParameter { value = 0f };
 
         // SAO-only parameters
+
         /// <summary>
         /// Radius of sample points, which affects extent of darkened areas.
         /// </summary>
@@ -145,7 +144,7 @@ namespace UnityEngine.Rendering.PostProcessing
         public FloatParameter radius = new FloatParameter { value = 0.25f };
 
         /// <summary>
-        /// The number of sample points, which affects quality and performance. Lowest, Low & Medium
+        /// The number of sample points, which affects quality and performance. Lowest, Low and Medium
         /// passes are downsampled. High and Ultra are not and should only be used on high-end
         /// hardware.
         /// </summary>
@@ -155,7 +154,12 @@ namespace UnityEngine.Rendering.PostProcessing
         // SRPs can call this method without a context set (see HDRP).
         // We need a better way to handle this than checking for a null context, context should
         // never be null.
-        /// <inheritdoc />
+
+        /// <summary>
+        /// Returns <c>true</c> if the effect is currently enabled and supported.
+        /// </summary>
+        /// <param name="context">The current post-processing render context</param>
+        /// <returns><c>true</c> if the effect is currently enabled and supported</returns>
         public override bool IsEnabledAndSupported(PostProcessRenderContext context)
         {
             bool state = enabled.value
@@ -168,30 +172,26 @@ namespace UnityEngine.Rendering.PostProcessing
                 if (context != null)
                 {
                     state &= context.resources.shaders.scalableAO
-                          && context.resources.shaders.scalableAO.isSupported;
+                        && context.resources.shaders.scalableAO.isSupported;
                 }
             }
             else if (mode.value == AmbientOcclusionMode.MultiScaleVolumetricObscurance)
             {
-#if UNITY_2017_1_OR_NEWER
                 if (context != null)
                 {
                     state &= context.resources.shaders.multiScaleAO
-                          && context.resources.shaders.multiScaleAO.isSupported
-                          && context.resources.computeShaders.multiScaleAODownsample1
-                          && context.resources.computeShaders.multiScaleAODownsample2
-                          && context.resources.computeShaders.multiScaleAORender
-                          && context.resources.computeShaders.multiScaleAOUpsample;
+                        && context.resources.shaders.multiScaleAO.isSupported
+                        && context.resources.computeShaders.multiScaleAODownsample1
+                        && context.resources.computeShaders.multiScaleAODownsample2
+                        && context.resources.computeShaders.multiScaleAORender
+                        && context.resources.computeShaders.multiScaleAOUpsample;
                 }
 
                 state &= SystemInfo.supportsComputeShaders
-                      && !RuntimeUtilities.isAndroidOpenGL
-                      && RenderTextureFormat.RFloat.IsSupported()
-                      && RenderTextureFormat.RHalf.IsSupported()
-                      && RenderTextureFormat.R8.IsSupported();
-#else
-                state = false;
-#endif
+                    && !RuntimeUtilities.isAndroidOpenGL
+                    && RenderTextureFormat.RFloat.IsSupported()
+                    && RenderTextureFormat.RHalf.IsSupported()
+                    && RenderTextureFormat.R8.IsSupported();
             }
 
             return state;
@@ -207,9 +207,7 @@ namespace UnityEngine.Rendering.PostProcessing
         void Release();
     }
 
-#if UNITY_2017_1_OR_NEWER
     [UnityEngine.Scripting.Preserve]
-#endif
     internal sealed class AmbientOcclusionRenderer : PostProcessEffectRenderer<AmbientOcclusion>
     {
         IAmbientOcclusionMethod[] m_Methods;
