@@ -640,7 +640,7 @@ namespace UnityEngine.Rendering.PostProcessing
                     width = xrDesc.width;
 #endif
                 tempRt = m_TargetPool.Get();
-                context.GetScreenSpaceTemporaryRT(m_LegacyCmdBuffer, tempRt, 0, sourceFormat, RenderTextureReadWrite.sRGB, FilterMode.Bilinear, width);
+                context.GetScreenSpaceTemporaryRT(m_LegacyCmdBuffer, tempRt, 0, sourceFormat, RenderTextureReadWrite.sRGB, FilterMode.Point);
                 m_LegacyCmdBuffer.BuiltinBlit(cameraTarget, tempRt, RuntimeUtilities.copyStdMaterial, stopNaNPropagation ? 1 : 0);
                 if (!m_NaNKilled)
                     m_NaNKilled = stopNaNPropagation;
