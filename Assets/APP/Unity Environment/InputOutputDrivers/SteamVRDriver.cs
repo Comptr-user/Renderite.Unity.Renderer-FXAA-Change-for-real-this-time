@@ -1436,9 +1436,15 @@ public class SteamVRDriver : InputDriver, IDriverHeadDevice, IOutputDriver
 
         if (!skeleton.activeBinding || !skeleton.poseIsValid)
         {
+            if (controller is TouchControllerState touch && controller.isTracking && !DisableSkeletalModel)
+                touch.hasBoundHand = true;
+            
             hand.isTracking = false;
             return;
         }
+
+        if (controller is TouchControllerState touchWithSkeleton)
+            touchWithSkeleton.hasBoundHand = DisableSkeletalModel;
 
         if (!controller.isTracking)
             return;
