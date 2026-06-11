@@ -30,6 +30,11 @@ public class WindowDriver : WindowInput
     {
         try
         {
+            if(Renderite.Shared.Helper.IsWine) {
+                for (int i = 0; i < aPathNames.Count; i++) {
+                    aPathNames[i] = Renderite.Shared.Helper.DosToUnix(aPathNames[i]);
+                }
+            }
             _stagedEvent = new DragAndDropEvent
             {
                 paths = aPathNames,
