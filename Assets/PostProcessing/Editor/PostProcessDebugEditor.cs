@@ -81,7 +81,7 @@ namespace UnityEditor.Rendering.PostProcessing
             if (m_PostProcessLayer.objectReferenceValue != null)
             {
                 m_LayerObject.Update();
-                
+
                 // Overlays
                 EditorGUILayout.Space();
                 EditorGUILayout.LabelField(EditorUtilities.GetContent("Overlay"), EditorStyles.boldLabel);
@@ -104,7 +104,7 @@ namespace UnityEditor.Rendering.PostProcessing
                 DoMonitorGUI(EditorUtilities.GetContent("Light Meter"), m_LightMeterEnabled, m_LightMeterShowCurves);
                 DoMonitorGUI(EditorUtilities.GetContent("Histogram"), m_HistogramEnabled, m_HistogramChannel);
                 DoMonitorGUI(EditorUtilities.GetContent("Waveform"), m_WaveformEnabled, m_WaveformExposure);
-                DoMonitorGUI(EditorUtilities.GetContent("Vectoscope"), m_VectorscopeEnabled, m_VectorscopeExposure);
+                DoMonitorGUI(EditorUtilities.GetContent("Vectorscope"), m_VectorscopeEnabled, m_VectorscopeExposure);
                 EditorGUI.indentLevel--;
 
                 m_LayerObject.ApplyModifiedProperties();
