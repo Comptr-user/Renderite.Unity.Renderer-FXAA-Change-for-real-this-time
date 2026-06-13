@@ -142,6 +142,9 @@ namespace UnityEngine.Rendering.PostProcessing
         /// <returns><c>true</c> if the effect is currently enabled and supported</returns>
         public override bool IsEnabledAndSupported(PostProcessRenderContext context)
         {
+            if (context.antialiasing == PostProcessLayer.Antialiasing.SubpixelMorphologicalAntialiasing && RuntimeUtilities.isSinglePassStereoEnabled) //disables SSR if SMAA is used in VR.
+                return false;
+            else
             return enabled
                 && context.camera.actualRenderingPath == RenderingPath.DeferredShading
                 && SystemInfo.supportsMotionVectors
