@@ -1343,12 +1343,12 @@ namespace UnityEngine.Rendering.PostProcessing
                     cmd.BlitFullscreenTriangleToDoubleWide(context.source, context.destination, uberSheet, 0, eye);
                 }
                 else
-#if LWRP_1_0_0_OR_NEWER || UNIVERSAL_1_0_0_OR_NEWER
+//#if LWRP_1_0_0_OR_NEWER || UNIVERSAL_1_0_0_OR_NEWER
                     cmd.BlitFullscreenTriangle(context.source, context.destination, uberSheet, 0, false, context.camera.pixelRect);
-#else
-                    cmd.BlitFullscreenTriangle(context.source, context.destination, uberSheet, 0);
-#endif
-
+//#else
+//                    cmd.BlitFullscreenTriangle(context.source, context.destination, uberSheet, 0);
+//#endif
+//The code above was un-commented out in the post processing update, causing issue 6722. Commenting it out again fixes it.
                 if (tempTarget > -1)
                     cmd.ReleaseTemporaryRT(tempTarget);
             }
