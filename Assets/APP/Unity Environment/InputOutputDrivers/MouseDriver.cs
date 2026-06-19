@@ -30,7 +30,7 @@ public class MouseDriver : MouseInput
     bool _lastMouseLocked;
     Vector2Int? _lastLockPosition;
 
-    Vector2 WarpCursor(Vector2 pos) => new Vector2(pos.x, Screen.height - pos.y);
+    public static Vector2 WarpCursor(Vector2 pos) => new Vector2(pos.x, Screen.height - pos.y);
 
     protected override void UpdateState(MouseState state)
     {

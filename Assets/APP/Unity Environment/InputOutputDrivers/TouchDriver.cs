@@ -37,7 +37,7 @@ public class TouchDriver : InputDriver
             var touchState = state.touches[i];
 
             touchState.touchId = touch.touchId;
-            touchState.position = touch.screenPosition.ToRender();
+            touchState.position = MouseDriver.WarpCursor(touch.screenPosition).ToRender();
 
             touchState.isPressing = touch.phase == UnityEngine.InputSystem.TouchPhase.Began || 
                 touch.phase == UnityEngine.InputSystem.TouchPhase.Moved ||
