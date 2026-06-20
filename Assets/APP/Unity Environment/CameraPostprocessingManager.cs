@@ -105,6 +105,7 @@ public class CameraPostprocessingManager : MonoBehaviour
         _motionBlur = _postProcessing.defaultProfile.GetSetting<MotionBlur>();
         _bloom = _postProcessing.defaultProfile.GetSetting<Bloom>();
         _ssr = _postProcessing.defaultProfile.GetSetting<ScreenSpaceReflections>();
+        _ssr.enabled.value = false;
     }
 
     void AddPostProcessing()
