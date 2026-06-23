@@ -4,6 +4,7 @@ using UnityEngine;
 using System;
 using Renderite.Shared;
 using Renderite.Unity;
+using System.Linq;
 
 #if UNITY_STANDALONE_WIN
 
@@ -11,6 +12,9 @@ public class DuplicableDisplay : IDisplayTextureSource
 {
     uDesktopDuplication.Monitor _monitor;
     uWindowCapture.UwcWindow _window;
+
+    uDesktopDuplication.Monitor _handleMonitor;
+    ulong _handle;
 
     enum State
     {
@@ -24,15 +28,19 @@ public class DuplicableDisplay : IDisplayTextureSource
 
     HashSet<Action> _requests = new HashSet<Action>();
 
-    public Texture UnityTexture => _window?.texture ?? _monitor?.texture;
+    public Texture UnityTexture => _texture;
+    public Texture SourceTexture => _window?.texture ?? _monitor?.texture;
 
-    public DuplicableDisplay(int index)
+    RenderTexture _texture;
+
+    public DuplicableDisplay()
     {
 
     }
 
     void UpdateProperties(uDesktopDuplication.Monitor monitor, DisplayState state)
     {
+        state.monitorHandle = _handle;
         state.resolution = new RenderVector2i(monitor.width, monitor.height);
         state.refreshRate = -1;
         state.orientation = currentState == State.UsingWindowCapture ? RectOrientation.Default : ToEngine(monitor.rotation);
@@ -41,8 +49,31 @@ public class DuplicableDisplay : IDisplayTextureSource
         state.isPrimary = monitor.isPrimary;
     }
 
-    public void Update(uDesktopDuplication.Monitor monitor, DisplayState state)
+    public void Update(uDesktopDuplication.Monitor monitor, DisplayState state, ref List<WindowsMonitorApi.Monitor> monitorInfo)
     {
+        if (_handleMonitor != monitor)
+        {
+            if (monitorInfo == null)
+                monitorInfo = WindowsMonitorApi.QueryDisplayDevices();
+
+            var info = monitorInfo.FirstOrDefault(m => string.Equals(m.deviceID, monitor.name));
+
+            if (info == null)
+            {
+                Debug.LogWarning($"Failed to fetch handle for monitor: {monitor.name}\nDetected Monitors:\n" +
+                    $"{string.Join("\n", monitorInfo.Select(m => $"{m.name}, DeviceID: {m.deviceID}, Handle: 0x{m.handle:X}") )}");
+
+                _handle = 0;
+            }
+            else
+            {
+                _handle = info.handle;
+                Debug.Log($"Monitor {monitor.name} handle: 0x{_handle:X}");
+            }
+
+            _handleMonitor = monitor;
+        }
+
         if (_requests.Count == 0)
         {
             _monitor = null;
@@ -102,6 +133,21 @@ public class DuplicableDisplay : IDisplayTextureSource
             changed = true;
             currentState = State.UsingWindowCapture;
         }
+
+        var source = SourceTexture;
+
+        if (source != null && (_texture == null || _texture.width != source.width || _texture.height != source.height))
+        {
+            if (_texture != null)
+            {
+                UnityEngine.Object.Destroy(_texture);
+                _texture = null;
+            }
+
+            _texture = new RenderTexture(source.width, source.height, 0, UnityEngine.Experimental.Rendering.DefaultFormat.LDR);
+        }
+
+        Graphics.Blit(source, _texture, new Vector2(1, -1), new Vector2(0, 1));
 
         UpdateProperties(monitor, state);
 
@@ -172,6 +218,8 @@ public class DisplayDriver : DisplayInput
     {
         var monitors = uDesktopDuplication.Manager.monitors;
 
+        List<WindowsMonitorApi.Monitor> monitorInfo = null;
+
         for (int i = 0; i < monitors.Count; i++)
         {
             var monitor = monitors[i];
@@ -192,15 +240,23 @@ public class DisplayDriver : DisplayInput
 
             if (_displays.Count == i)
             {
-                display = new DuplicableDisplay(i);
+                display = new DuplicableDisplay();
 
                 _displays.Add(display);
             }
             else
                 display = _displays[i];
 
-            display.Update(monitor, state);
+            display.Update(monitor, state, ref monitorInfo);
         }
+
+        // Remove any extras
+        // TODO!!! Is there need for disposal? Generally this doesn't happen often
+        while(_displays.Count > monitors.Count)
+            _displays.RemoveAt(_displays.Count - 1);
+
+        while (states.Count > monitors.Count)
+            states.RemoveAt(states.Count - 1);
     }
 #else
 
