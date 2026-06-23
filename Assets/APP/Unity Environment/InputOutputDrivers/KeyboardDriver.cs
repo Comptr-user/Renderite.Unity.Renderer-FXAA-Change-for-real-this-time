@@ -175,6 +175,10 @@ public class KeyboardDriver : KeyboardInput
     protected override void UpdateState(KeyboardState state)
     {
         state.typeDelta = GetTypeDelta();
+        var compositionText = UnityEngine.Input.compositionString;
+        var compositionActive = !string.IsNullOrEmpty(compositionText);
+        state.compositionActive = compositionActive;
+        state.compositionText = compositionActive ? compositionText : null;
 
         // Collect the currently held keys
         if (state.heldKeys == null)
