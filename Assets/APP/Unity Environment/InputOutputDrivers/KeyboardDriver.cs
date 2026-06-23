@@ -193,6 +193,9 @@ public class KeyboardDriver : KeyboardInput
 
     public override void HandleOutputState(OutputState output)
     {
+        if (output.compositionCursorPosition != null)
+            Input.compositionCursorPos = output.compositionCursorPosition.Value.ToUnity();
+
         if(output.keyboardInputActive != _lastKeyboardActive)
         {
             _lastKeyboardActive = output.keyboardInputActive;
