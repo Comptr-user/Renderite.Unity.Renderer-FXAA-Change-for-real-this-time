@@ -28,7 +28,10 @@ public class DuplicableDisplay : IDisplayTextureSource
 
     HashSet<Action> _requests = new HashSet<Action>();
 
-    public Texture UnityTexture => _window?.texture ?? _monitor?.texture;
+    public Texture UnityTexture => _texture;
+    public Texture SourceTexture => _window?.texture ?? _monitor?.texture;
+
+    RenderTexture _texture;
 
     public DuplicableDisplay()
     {
@@ -37,6 +40,7 @@ public class DuplicableDisplay : IDisplayTextureSource
 
     void UpdateProperties(uDesktopDuplication.Monitor monitor, DisplayState state)
     {
+        state.monitorHandle = _handle;
         state.resolution = new RenderVector2i(monitor.width, monitor.height);
         state.refreshRate = -1;
         state.orientation = currentState == State.UsingWindowCapture ? RectOrientation.Default : ToEngine(monitor.rotation);
@@ -129,6 +133,21 @@ public class DuplicableDisplay : IDisplayTextureSource
             changed = true;
             currentState = State.UsingWindowCapture;
         }
+
+        var source = SourceTexture;
+
+        if (source != null && (_texture == null || _texture.width != source.width || _texture.height != source.height))
+        {
+            if (_texture != null)
+            {
+                UnityEngine.Object.Destroy(_texture);
+                _texture = null;
+            }
+
+            _texture = new RenderTexture(source.width, source.height, 0, UnityEngine.Experimental.Rendering.DefaultFormat.LDR);
+        }
+
+        Graphics.Blit(source, _texture, new Vector2(1, -1), new Vector2(0, 1));
 
         UpdateProperties(monitor, state);
 
