@@ -150,7 +150,7 @@ public class CameraPostprocessingManager : MonoBehaviour
         _ao.FadeStart = 16.0f;
         _ao.FadeLength = 128.0f;
 
-        _ao.SampleCount = AmplifyOcclusion.SampleCountLevel.Low;
+        _ao.SampleCount = AmplifyOcclusion.SampleCountLevel.VeryHigh; //built in options are "Low, Medium, High, VeryHigh"
 
         if (!IsPrimary)
         {
