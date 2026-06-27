@@ -50,7 +50,7 @@ This repo has GitLFS files and thusly, requires Git LFS to be installed alongsid
 - Once Downloaded on Linux, run `git lfs install` in the terminal to finish the install.
 
 # Building
-Unity Version: Unity 2019.4f19
+Unity Version: Unity 2019.4.19f1
 
 1) Open the project in Unity
 2) Ensure `UMP_SUPPORTED` keyword is not defined if you don't have UniversalMediaPlayer in the repo
