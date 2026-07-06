@@ -124,8 +124,9 @@ PlayerSettings:
     16:10: 1
     16:9: 1
     Others: 1
-  bundleVersion: 2026.6.12.146
+  bundleVersion: 2026.6.23.743
   preloadedAssets:
+  - {fileID: 0}
   - {fileID: 0}
   - {fileID: 0}
   - {fileID: 0}
@@ -803,7 +804,7 @@ PlayerSettings:
   webGLThreadsSupport: 0
   webGLWasmStreaming: 0
   scriptingDefineSymbols:
-    1: POST_PROCESSING_STACK_V2;UMP_SUPPORTED
+    1: POST_PROCESSING_STACK_V2;UMP_SUPPORTED;UNITY_POST_PROCESSING_STACK_V2;STEAMWORKS_NET
     2: CROSS_PLATFORM_INPUT
     4: CROSS_PLATFORM_INPUT;MOBILE_INPUT;UNITY_POST_PROCESSING_STACK_V2
     7: POST_PROCESSING_STACK_V2;DISABLESTEAMWORKS;UNITY_POST_PROCESSING_STACK_V2
